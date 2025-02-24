@@ -56,8 +56,11 @@ source venv/bin/activate
 
 ## **Download Dataset**
 
-Go to the folder data/ and download RAW_recipes.csv to your computer.
-
+Go to the link in 'dataset' and download RAW_recipes.csv to your computer. Then copy and instert the file path into the 'file_path' function in the scr file.
+```
+file_path = r"C:\Users\cmpas\Downloads\RAW_recipes.csv"
+df = pd.read_csv(file_path)
+```
 
 ## **How the Code Works**
 ### **1. Text Vectorization**
