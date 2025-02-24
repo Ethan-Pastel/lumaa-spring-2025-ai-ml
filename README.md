@@ -56,7 +56,7 @@ source venv/bin/activate
 
 ## **Download Dataset**
 
-Go to the link in 'dataset' and download RAW_recipes.csv to your computer. Then copy and instert the file path into the 'file_path' function in the scr file.
+Go to the link in 'dataset' and download RAW_recipes.csv to your computer. Then copy and insert the file path into the 'file_path' function in the scr file.
 ```
 file_path = r"C:\Users\cmpas\Downloads\RAW_recipes.csv"
 df = pd.read_csv(file_path)
