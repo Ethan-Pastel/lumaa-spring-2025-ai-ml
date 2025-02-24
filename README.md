@@ -1,91 +1,195 @@
-# AI/Machine Learning Intern Challenge: Simple Content-Based Recommendation
+# Recipe Recommendation System 
 
-**Deadline**: Sunday, Feb 23th 11:59 pm PST
+I’ve always loved cooking—experimenting with flavors, trying new recipes, and finding ways to make meals both delicious and nutritious. However one challenge I often faced was finding the perfect recipe when I had a specific craving or dietary preference in mind. Whether I wanted something spicy, healthy, or a quick meal, searching through countless recipes online can get annoying.
 
----
+That’s what inspired me to build this Content-Based Recipe Recommendation System—a tool that helps people find the best recipes based on their own descriptions and preferences. By using TF-IDF vectorization and cosine similarity, the system can analyze a user’s input (e.g., "I want a high-protein spicy chicken dish") and return the most relevant recipes.
 
-## Overview
+Beyond just matching recipes by text, I wanted this system to be smart about nutrition, so I integrated health classifications to help users identify whether a meal is a “Healthy Choice” or a “Standard Meal.”
 
-Build a **content-based recommendation system** that, given a **short text description** of a user’s preferences, suggests **similar items** (e.g., movies) from a small dataset. This challenge should take about **3 hours**, so keep your solution **simple** yet **functional**.
-
-### Example Use Case
-
-- The user inputs:  
-  *"I love thrilling action movies set in space, with a comedic twist."*  
-- Your system processes this description (query) and compares it to a dataset of items (e.g., movies with their plot summaries or keywords).  
-- You then return the **top 3–5 “closest” matches** to the user.
+This project combines my love for cooking with my passion for data science, and I hope it makes discovering new meals easier and more enjoyable for everyone!
 
 ---
 
-## Requirements
-
-1. **Dataset**  
-   - Use a **small** public dataset of items (e.g., a list of movies with plot summaries, or other textual descriptions).  
-   - Make sure the dataset is easy to handle (maybe 100–500 rows) so the solution remains quick to implement and run.  
-   - Include the dataset in your forked repository *or* provide instructions/link on how to download it.  
-
-2. **Approach**  
-   - **Content-Based**: At a minimum, use text similarity to recommend items.  
-     - For instance, you can transform both the user’s text input and each item’s description into TF-IDF vectors and compute **cosine similarity**.  
-   - Return the **top N** similar items (e.g., top 5).
-
-3. **Code Organization**  
-   - You may use a **Jupyter Notebook** or **Python scripts**.  
-   - Keep it **readable** and **modular** (e.g., one section for loading data, one for building vectors, one for computing similarity, etc.).  
-   - Briefly comment or docstring your key functions/sections.
-
-4. **Output**  
-   - When given an input description (e.g., `"I like action movies set in space"`), your system should print or return a list of recommended items (e.g., 3–5 titles).  
-   - Include the similarity score or rank if you’d like.
-
-5. **Summary & Instructions**  
-   - A short `README.md` that includes:
-     - **Dataset**: Where it’s from, any steps to load it.  
-     - **Setup**: Python version, virtual environment instructions, and how to install dependencies (`pip install -r requirements.txt`).  
-     - **Running**: How to run your code (e.g., `python recommend.py "Some user description"` or open your notebook in Jupyter).  
-     - **Results**: A brief example of your system’s output for a sample query.
+## **Dataset**
+- **Name**: [Food.com Recipes and User Interactions](https://www.kaggle.com/datasets/shuyangli94/food-com-recipes-and-user-interactions)
+- **Source**: Kaggle
+- **File Used**: `RAW_recipes.csv`
+- **Size**: 231,000+ recipes
+- **Preprocessing**:
+  - Unnecessary columns dropped
+  - Missing values removed
+  - Combined recipe descriptions, ingredients, and tags into a single text field
+  - Nutrition data parsed for **calories, fat, sugar, protein, and sodium**
+  - Sampled **500 recipes** for efficiency
 
 ---
 
-## Deliverables
+## **Setup & Installation**
+### **1. Clone the Repository**
+```bash
+git clone https://github.com/YOUR_USERNAME/recipe-recommender.git
+cd recipe-recommender
+```
+### **2. Create a Virtual Environment**
 
-1. **Fork the Public Repository**  
-   - **Fork** this repo into your own GitHub account.
+### For Windows
+```
+python -m venv venv
+venv\Scripts\activate
+````
+### For Mac
+```
+python3 -m venv venv
+source venv/bin/activate
+```
 
-2. **Implement Your Solution**  
-   - Load and preprocess your dataset (e.g., read CSV, handle text columns).  
-   - Convert text data to vectors (e.g., TF-IDF).  
-   - Implement a function to compute similarity between the user’s query and each item’s description.  
-   - Return the top matches.
-   - Salary expectation per month (Mandatory)
+### **3. Install Dependencies**
 
-3. **Short Video Demo**  
-   - In a `.md` file (e.g., `demo.md`) within your fork, paste a link to a **brief screen recording** (video link).  
-   - Demonstrate:
-     - How you run the recommendation code.  
-     - A sample query and the results.
+```
+- pip install -r requirements.txt
+```
 
-4. **Deadline**  
-   - Submit your fork by **Sunday, Feb 23th 11:59 pm PST**.
+### If pip is not recognized, use:
+```
+- python -m pip install -r requirements.txt
+```
 
-> **Note**: This should be doable within ~3 hours. Keep it **straightforward**—you do **not** need advanced neural networks or complex pipelines. A simple TF-IDF + cosine similarity approach is sufficient.
+## **Download Dataset**
 
----
+Go to the folder data/ and download RAW_recipes.csv to your computer.
 
-## Evaluation Criteria
 
-1. **Functionality**  
-   - Does your code run without errors?  
-   - When given an input query, does it successfully output relevant items?
+## **How the Code Works**
+### **1. Text Vectorization**
+The system uses TF-IDF (Term Frequency-Inverse Document Frequency) to convert text into numerical vectors for comparison:
 
-2. **Code Quality**  
-   - Clear, commented code (where it counts).  
-   - Logical steps (load data → transform → recommend).
+```
+vectorizer = TfidfVectorizer()
+tfidf_matrix = vectorizer.fit_transform(df_recipes['processed_text'])
 
-3. **Clarity**  
-   - Is your `README.md` straightforward about setup, how to run, and what to expect?
+```
+The TF-IDF assigns higher weights to important words (e.g., "spicy", "vegan") and lower weights to common words** (e.g., "the", "and").
 
-4. **ML/Recommendation Understanding**  
-   - Basic implementation of a content-based recommendation approach (vectorization, similarity measure).
+### **2. Recipe Category Detection**
 
-**We look forward to seeing your solution!** Good luck!
+The system automatically detects keywords in user input and prioritizes recipes that match relevant categories:
+```
+CATEGORY_KEYWORDS = {
+    "dessert": ["cookie", "cake", "brownie", "dessert", "sweets"],
+    "healthy": ["low calorie", "high protein", "vegan", "gluten-free"],
+    "spicy": ["spicy", "hot", "chili", "jalapeno"],
+}
+
+def detect_category(user_input):
+    for category, keywords in CATEGORY_KEYWORDS.items():
+        if any(keyword in user_input.lower() for keyword in keywords):
+            return category
+    return None
+```
+If a user says "I want a spicy chicken dish", the system prioritizes the words'spicy' and 'chicken' recipes.
+
+
+### **3. Finding the Best Match**
+
+Using cosine similarity, the system compares the user’s request to all recipes and finds the most similar ones:
+
+```
+user_vector = vectorizer.transform([user_input])
+similarity_scores = cosine_similarity(user_vector, tfidf_matrix).flatten()
+top_indices = similarity_scores.argsort()[-5:][::-1]  # Sort in descending order
+
+```
+Higher similarity scores = Better recipe matches
+The system returns the top 5 most relevant recipes.
+
+### **4. Determining If a Recipe Is Healthy**
+
+Each recipe contains nutrition data (Calories, Fat, Sugar, Protein, Sodium). The system classifies meals based on the following criteria:
+
+Criteria to be a	Healthy Threshold
+
+Calories	< 500 kcal
+Total Fat	< 20g
+Sugar	< 10g
+Protein	> 15g
+Sodium	< 600mg
+
+If a recipe meets these requirements, it is labeled "Healthy Choice":
+
+```
+def is_healthy(nutrition_info):
+    if not nutrition_info:
+        return "Standard Meal"
+    
+    if nutrition_info["Calories"] < 500 and nutrition_info["Sugar"] < 10 and nutrition_info["Protein"] > 15:
+        return "Healthy Choice"
+    return "Standard Meal"
+```
+
+## **Example Output**
+
+### **User Input:**
+
+```
+Enter a description of what you want to cook (or type 'exit' to quit): low fat pasta dish
+```
+
+### **System Output:**
+
+```
+ **Top Recipe Recommendations:**
+1. Low Fat Italian Pasta Salad (41.34% match) - Standard Meal
+2. Spicy Sweet Mustard Chicken (28.45% match) - Standard Meal
+3. Honey Glazed Shallots with Mint (18.41% match) - Standard Meal
+4. Sausage and Roasted Peppers Pasta Bake (17.41% match) - Standard Meal
+5. Curry Chicken Pasta (15.82% match) - Standard Meal
+
+Enter a number to see details, 'new' for new recommendations, or 'exit': 1
+```
+
+### **User selects option 1 (Low Fat Italian Pasta Salad):**
+
+```
+ **Low Fat Italian Pasta Salad**
+ **Description:** Low fat, low cholesterol Italian-flavored pasta salad.  
+ I'm now on a low-fat, low-cholesterol diet. I don't eat a lot of "good-for-you" foods. The ones I do eat,
+ I have to eat them cooked—don't like crunchy foods.  
+ Often, I just throw a bunch of stuff together and see how I like it. This is how I got this one.    
+
+ **Ingredients:**  
+- Fat-free Italian salad dressing  
+- Water  
+- Zucchini  
+- Roma tomato  
+- Onion  
+- Garlic  
+- Bell pepper  
+- Rotini pasta  
+- Basil  
+- Marjoram  
+- Rosemary  
+- Garlic seasoning  
+- Croutons  
+
+ **Cooking Time:** 25 minutes  
+ **Health Classification:** Standard Meal  
+
+ **Nutritional Info:**  
+   🔹 **Calories:** 21.6  
+   🔹 **Total Fat:** 0.0g  
+   🔹 **Sugar:** 2.0g  
+   🔹 **Protein:** 0.0g  
+   🔹 **Sodium:** 1.0mg  
+
+ **Instructions:**  
+🔹 Cook pasta.  
+🔹 Meanwhile, sauté garlic, onions, bell pepper, zucchini, and Roma tomato together in the fat-free Italian dressing and a cup of water, adding spices (basil, marjoram, and rosemary).  
+🔹 Then, add the pasta and top with salad toppers, low-fat parmesan, red pepper, and garlic seasoning.  
+
+Enter a number to see details, 'new' for new recommendations, or 'exit':
+```
+
+## Salary expectation per month
+
+I would expect somewhere between 1600-2400$ a month, given 20/30$ an hour for 20 hours a week.
+
