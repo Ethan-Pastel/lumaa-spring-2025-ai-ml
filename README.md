@@ -58,7 +58,7 @@ source venv/bin/activate
 
 Go to the link in 'dataset' and download RAW_recipes.csv to your computer. Then copy and insert the file path into the 'file_path' function in the scr file.
 ```
-file_path = r"C:\Users\cmpas\Downloads\RAW_recipes.csv"
+file_path = r"(copy and paste your file path here)"
 df = pd.read_csv(file_path)
 ```
 
@@ -192,7 +192,5 @@ Enter a number to see details, 'new' for new recommendations, or 'exit': 1
 Enter a number to see details, 'new' for new recommendations, or 'exit':
 ```
 
-## Salary expectation per month
 
-I would expect somewhere between 1600-2400$ a month, given 20/30$ an hour for 20 hours a week.
 
